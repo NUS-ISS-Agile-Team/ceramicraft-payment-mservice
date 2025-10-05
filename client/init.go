@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/demopb"
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/paymentpb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
 	conn           *grpc.ClientConn
-	client         demopb.DemoServiceClient
+	client         paymentpb.PaymentServiceClient
 	clientSyncOnce sync.Once
 )
 
-func GetDemoClient(config *GRpcClientConfig) (demopb.DemoServiceClient, error) {
+func GetPaymentClient(config *GRpcClientConfig) (paymentpb.PaymentServiceClient, error) {
 	clientSyncOnce.Do(func() {
 		opts := []grpc.DialOption{
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -26,7 +26,7 @@ func GetDemoClient(config *GRpcClientConfig) (demopb.DemoServiceClient, error) {
 		if err != nil {
 			panic(err)
 		}
-		client = demopb.NewDemoServiceClient(conn)
+		client = paymentpb.NewPaymentServiceClient(conn)
 	})
 	return client, nil
 }

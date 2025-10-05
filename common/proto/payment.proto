@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package paymentpb;
+
+option go_package = "/paymentpb;paymentpb";
+
+service PaymentService {
+  rpc PayOrder (PayOrderRequest) returns (PayOrderResponse);
+  rpc QueryPayOrder (PayOrderQueryRequest) returns (PayOrderQueryResponse);
+}
+
+message PayOrderRequest {
+  int32 userId = 1;
+  int32 amount = 2;
+  string bizId = 3;
+}
+
+message PayOrderInfo {
+  string payOrderId = 1;
+  int32 amount = 2;
+  int32 userId = 3;
+  int64 createdTime = 4;
+}
+
+enum RespCode {
+  SUCCESS = 0;
+  INSUFFICIENT_BALANCE = 1001;
+  ACCOUNT_NOT_EXIST = 1002;
+  DUPLICATE_REQUEST = 1003;
+}
+
+message PayOrderResponse {
+  int32 code = 1;
+  optional string errorMsg = 2;
+  optional PayOrderInfo payOrderInfo = 3;
+}
+
+message PayOrderQueryRequest {
+  optional int32 userId = 1;
+  optional string payOrderId = 2;
+  optional int32 querySize = 3;
+}
+
+message PayOrderQueryResponse {
+  int32 code = 1;
+  optional string errorMsg = 2;
+  repeated PayOrderInfo payOrderInfos = 3;
+}
