@@ -3,7 +3,7 @@ module github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/client
 go 1.24.0
 
 require (
-	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20251005122112-f8ba0d115607
+	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20251005130221-f8a4ee56cb0c
 	google.golang.org/grpc v1.75.1
 )
 
