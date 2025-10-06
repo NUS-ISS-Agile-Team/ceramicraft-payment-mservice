@@ -1,10 +1,17 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/http/data"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/service"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	maxGenCodeSize = 100
 )
 
 // GenerateRedeemCodes godoc
@@ -22,11 +29,21 @@ func GenerateRedeemCodes(c *gin.Context) {
 	var req data.RedeemCodeGenRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		log.Logger.Errorf("GenerateRedeemCodes bind error:", err)
-		c.JSON(400, data.BaseResponse{ErrMsg: err.Error()})
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
-	ret := &data.RedeemCodeGenResult{GenCount: 0}
-	c.JSON(200, data.BaseResponse{Data: ret})
+	if req.Amount <= 0 || req.Count <= 0 || req.Count > maxGenCodeSize {
+		log.Logger.Error("GenerateRedeemCodes error: invalid amount or count")
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: "Amount must be positive and count must be between 1 and 100"})
+		return
+	}
+	err := service.GetRedeemCodeService().GenerateRedeemCodes(c.Request.Context(), req.Amount, req.Count)
+	if err != nil {
+		log.Logger.Errorf("GenerateRedeemCodes service error:", err)
+		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, data.BaseResponse{Data: map[string]interface{}{"gen_success_cnt": req.Count}})
 }
 
 // QueryRedeemCodes godoc
@@ -43,9 +60,19 @@ func QueryRedeemCodes(c *gin.Context) {
 	var query data.RedeemCodeQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
 		log.Logger.Errorf("QueryRedeemCodes bind error:", err)
-		c.JSON(400, data.BaseResponse{ErrMsg: err.Error()})
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
-	ret := make([]data.RedeemCodeVO, 0)
+	if query.Code == nil && query.Used == nil {
+		log.Logger.Error("QueryRedeemCodes error: at least one query parameter must be provided")
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: "At least one query parameter must be provided"})
+		return
+	}
+	ret, err := service.GetRedeemCodeService().QueryRedeemCodes(c.Request.Context(), &query)
+	if err != nil {
+		log.Logger.Errorf("QueryRedeemCodes service error:", err)
+		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
+		return
+	}
 	c.JSON(200, data.BaseResponse{Data: ret})
 }
