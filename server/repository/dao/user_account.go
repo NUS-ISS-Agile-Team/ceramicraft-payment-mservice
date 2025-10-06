@@ -15,7 +15,7 @@ type UserAccountDao interface {
 	CreateUserAccount(ctx context.Context, userAccount *model.UserAccount) error
 	GetUserAccountByUserID(ctx context.Context, userID int) (*model.UserAccount, error)
 	AddBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) error
-	SubtractBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) error
+	SubtractBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) (int, error)
 }
 
 var (
@@ -83,18 +83,18 @@ func (u *UserAccountDaoImpl) AddBalanceInTransaction(ctx context.Context, userID
 }
 
 // SubtractBalance implements UserAccountDao.
-func (u *UserAccountDaoImpl) SubtractBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) error {
+func (u *UserAccountDaoImpl) SubtractBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) (int, error) {
 	ret := u.db.WithContext(ctx).Model(&model.UserAccount{}).
 		Where("user_id = ? and balance=?", userID, oldAmount).
 		Update("balance", gorm.Expr("balance - ?", amount))
 	if ret.Error != nil {
 		log.Logger.Errorf("Failed to subtract balance for user ID %d: %v", userID, ret.Error)
-		return ret.Error
+		return 0, ret.Error
 	}
 	if ret.RowsAffected == 0 {
 		log.Logger.Warnf("No user account found to subtract balance for user ID %d", userID)
-		return gorm.ErrCheckConstraintViolated
+		return 0, gorm.ErrCheckConstraintViolated
 	}
 	log.Logger.Infof("Successfully subtracted %d from user ID %d", amount, userID)
-	return nil
+	return int(ret.RowsAffected), nil
 }

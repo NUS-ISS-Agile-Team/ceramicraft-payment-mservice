@@ -27,8 +27,6 @@ RUN adduser -D -h /home/appuser appuser && \
     chmod +w logs && \
     chmod +x main
 
-# EXPOSE 8080
-
 USER appuser
 
 # Command to run the application

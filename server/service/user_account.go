@@ -52,6 +52,10 @@ const userAccountNoSize = 12
 
 // CreateUserAccount implements UserAccountService.
 func (u *UserAccountServiceImpl) CreateUserAccount(ctx context.Context, userId int) (*model.UserAccount, error) {
+	if userId <= 0 {
+		log.Logger.Errorf("Invalid user ID: %d", userId)
+		return nil, fmt.Errorf("invalid user ID")
+	}
 	account, err := u.userAccountDao.GetUserAccountByUserID(ctx, userId)
 	if err != nil {
 		log.Logger.Errorf("Failed to get user account for user ID %d: %v", userId, err)
@@ -118,10 +122,14 @@ func (u *UserAccountServiceImpl) PayOrder(ctx context.Context, userId int, bizId
 			log.Logger.Errorf("Failed to create user account change log for user ID %d: %v", userId, err)
 			return err
 		}
-		err = u.userAccountDao.SubtractBalanceInTransaction(ctx, userId, amount, account.Balance, tx)
+		rowsAffected, err := u.userAccountDao.SubtractBalanceInTransaction(ctx, userId, amount, account.Balance, tx)
 		if err != nil {
 			log.Logger.Errorf("Failed to subtract balance for user ID %d: %v", userId, err)
 			return err
+		}
+		if rowsAffected == 0 {
+			log.Logger.Errorf("No user account found to subtract balance for user ID %d", userId)
+			return &bizerror.BizError{Code: int(paymentpb.RespCode_UNKNOWN_ERROR), Message: "failed to subtract balance"}
 		}
 		return nil
 	})
