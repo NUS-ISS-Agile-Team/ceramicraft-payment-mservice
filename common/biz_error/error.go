@@ -1,4 +1,4 @@
-package bizerror
+package biz_error
 
 // BizError represents a business error with a code, message, and an optional underlying error.
 type BizError struct {
