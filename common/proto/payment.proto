@@ -27,6 +27,8 @@ enum RespCode {
   INSUFFICIENT_BALANCE = 1001;
   ACCOUNT_NOT_EXIST = 1002;
   DUPLICATE_REQUEST = 1003;
+
+  UNKNOWN_ERROR = 5000;
 }
 
 message PayOrderResponse {
@@ -36,8 +38,8 @@ message PayOrderResponse {
 }
 
 message PayOrderQueryRequest {
-  optional int32 userId = 1;
-  optional string payOrderId = 2;
+  int32 userId = 1;
+  optional string bizId = 2;
   optional int32 querySize = 3;
 }
 

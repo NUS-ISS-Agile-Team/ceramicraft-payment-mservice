@@ -263,8 +263,8 @@ func (x *PayOrderResponse) GetPayOrderInfo() *PayOrderInfo {
 
 type PayOrderQueryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        *int32                 `protobuf:"varint,1,opt,name=userId,proto3,oneof" json:"userId,omitempty"`
-	PayOrderId    *string                `protobuf:"bytes,2,opt,name=payOrderId,proto3,oneof" json:"payOrderId,omitempty"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	BizId         *string                `protobuf:"bytes,2,opt,name=bizId,proto3,oneof" json:"bizId,omitempty"`
 	QuerySize     *int32                 `protobuf:"varint,3,opt,name=querySize,proto3,oneof" json:"querySize,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -301,15 +301,15 @@ func (*PayOrderQueryRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *PayOrderQueryRequest) GetUserId() int32 {
-	if x != nil && x.UserId != nil {
-		return *x.UserId
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
 
-func (x *PayOrderQueryRequest) GetPayOrderId() string {
-	if x != nil && x.PayOrderId != nil {
-		return *x.PayOrderId
+func (x *PayOrderQueryRequest) GetBizId() string {
+	if x != nil && x.BizId != nil {
+		return *x.BizId
 	}
 	return ""
 }
@@ -402,15 +402,12 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\berrorMsg\x18\x02 \x01(\tH\x00R\berrorMsg\x88\x01\x01\x12@\n" +
 	"\fpayOrderInfo\x18\x03 \x01(\v2\x17.paymentpb.PayOrderInfoH\x01R\fpayOrderInfo\x88\x01\x01B\v\n" +
 	"\t_errorMsgB\x0f\n" +
-	"\r_payOrderInfo\"\xa3\x01\n" +
-	"\x14PayOrderQueryRequest\x12\x1b\n" +
-	"\x06userId\x18\x01 \x01(\x05H\x00R\x06userId\x88\x01\x01\x12#\n" +
-	"\n" +
-	"payOrderId\x18\x02 \x01(\tH\x01R\n" +
-	"payOrderId\x88\x01\x01\x12!\n" +
-	"\tquerySize\x18\x03 \x01(\x05H\x02R\tquerySize\x88\x01\x01B\t\n" +
-	"\a_userIdB\r\n" +
-	"\v_payOrderIdB\f\n" +
+	"\r_payOrderInfo\"\x84\x01\n" +
+	"\x14PayOrderQueryRequest\x12\x16\n" +
+	"\x06userId\x18\x01 \x01(\x05R\x06userId\x12\x19\n" +
+	"\x05bizId\x18\x02 \x01(\tH\x00R\x05bizId\x88\x01\x01\x12!\n" +
+	"\tquerySize\x18\x03 \x01(\x05H\x01R\tquerySize\x88\x01\x01B\b\n" +
+	"\x06_bizIdB\f\n" +
 	"\n" +
 	"_querySize\"\x98\x01\n" +
 	"\x15PayOrderQueryResponse\x12\x12\n" +
