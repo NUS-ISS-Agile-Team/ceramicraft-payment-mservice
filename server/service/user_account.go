@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/bizerror"
+	bizerror "github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/biz_error"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/paymentpb"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/repository"
@@ -95,15 +95,15 @@ func (u *UserAccountServiceImpl) PayOrder(ctx context.Context, userId int, bizId
 	account, err := u.userAccountDao.GetUserAccountByUserID(ctx, userId)
 	if err != nil {
 		log.Logger.Errorf("Failed to get user account for user ID %d: %v", userId, err)
-		return nil, bizerror.BizError{Message: "failed to get user account"}
+		return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_UNKNOWN_ERROR), Message: "failed to get user account", Err: err}
 	}
 	if account == nil {
 		log.Logger.Warnf("User account not found for user ID %d", userId)
-		return nil, nil
+		return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_ACCOUNT_NOT_EXIST), Message: "user account not found"}
 	}
 	if account.Balance < amount {
 		log.Logger.Warnf("Insufficient balance for user ID %d: balance %d, required %d", userId, account.Balance, amount)
-		return nil, fmt.Errorf("insufficient balance")
+		return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_INSUFFICIENT_BALANCE), Message: "insufficient balance"}
 	}
 	changeLog := &model.UserAccountChangeLog{
 		AccountId:     account.ID,
@@ -127,7 +127,7 @@ func (u *UserAccountServiceImpl) PayOrder(ctx context.Context, userId int, bizId
 	})
 	if err != nil {
 		log.Logger.Errorf("Transaction failed for user ID %d: %v", userId, err)
-		return nil, err
+		return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_UNKNOWN_ERROR), Message: "transaction failed", Err: err}
 	}
 	log.Logger.Infof("Successfully paid order for user ID %d, amount %d, biz ID %s", userId, amount, bizId)
 	return changeLog, nil
@@ -205,11 +205,11 @@ func (u *UserAccountServiceImpl) GetUserPayHistory(ctx context.Context, query *p
 		account, err := u.userAccountDao.GetUserAccountByUserID(ctx, int(query.UserId))
 		if err != nil {
 			log.Logger.Errorf("Failed to get user account for user ID %d: %v", query.UserId, err)
-			return nil, err
+			return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_UNKNOWN_ERROR), Message: "failed to get user account", Err: err}
 		}
 		if account == nil {
 			log.Logger.Warnf("User account not found for user ID %d", query.UserId)
-			return nil, fmt.Errorf("user account not found")
+			return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_ACCOUNT_NOT_EXIST), Message: "user account not found"}
 		}
 		accountId = &account.ID
 	}
@@ -221,7 +221,7 @@ func (u *UserAccountServiceImpl) GetUserPayHistory(ctx context.Context, query *p
 		})
 	if err != nil {
 		log.Logger.Errorf("Failed to query user account change logs: %v", err)
-		return nil, err
+		return nil, &bizerror.BizError{Code: int(paymentpb.RespCode_UNKNOWN_ERROR), Message: "failed to query change logs", Err: err}
 	}
 	return changeLogs, nil
 }

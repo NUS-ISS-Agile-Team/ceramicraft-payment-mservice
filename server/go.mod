@@ -3,6 +3,7 @@ module github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server
 go 1.24.0
 
 require (
+	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v1.0.4
 	github.com/NUS-ISS-Agile-Team/ceramicraft-user-mservice/common v0.0.0-20251005082610-86cad2eddbc9
 	github.com/gin-gonic/gin v1.11.0
 	github.com/spf13/viper v1.21.0
@@ -19,7 +20,6 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20251006071226-75399caaed56 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect
