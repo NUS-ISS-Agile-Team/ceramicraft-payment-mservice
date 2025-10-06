@@ -11,10 +11,18 @@ var (
 )
 
 type Conf struct {
-	GrpcConfig  *GrpcConfig `mapstructure:"grpc"`
-	LogConfig   *LogConfig  `mapstructure:"log"`
-	HttpConfig  *HttpConfig `mapstructure:"http"`
-	MySQLConfig *MySQL      `mapstructure:"mysql"`
+	GrpcConfig  *GrpcConfig          `mapstructure:"grpc"`
+	LogConfig   *LogConfig           `mapstructure:"log"`
+	HttpConfig  *HttpConfig          `mapstructure:"http"`
+	MySQLConfig *MySQL               `mapstructure:"mysql"`
+	KafkaConfig *KafkaConsumerConfig `mapstructure:"kafka"`
+}
+
+type KafkaConsumerConfig struct {
+	Brokers        []string `mapstructure:"brokers"`
+	GroupID        string   `mapstructure:"group_id"`
+	MaxBytes       int      `mapstructure:"max_bytes"`
+	CommitInterval int      `mapstructure:"commit_interval"`
 }
 
 type HttpConfig struct {
