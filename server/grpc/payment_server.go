@@ -33,8 +33,8 @@ func (s *PaymentService) PayOrder(ctx context.Context, req *paymentpb.PayOrderRe
 
 func (s *PaymentService) QueryPayOrder(ctx context.Context, req *paymentpb.PayOrderQueryRequest) (*paymentpb.PayOrderQueryResponse, error) {
 	log.Logger.Infof("[grpc-svr] method=QueryPayOrder, req=%v", req)
-	if req.UserId == nil && req.PayOrderId == nil {
-		log.Logger.Warnf("Either UserId or PayOrderId must be provided")
+	if req.UserId == 0 && req.BizId == nil {
+		log.Logger.Warnf("Either UserId or BizId must be provided")
 		return &paymentpb.PayOrderQueryResponse{
 			Code: -1, //todo
 		}, nil
@@ -48,7 +48,7 @@ func (s *PaymentService) QueryPayOrder(ctx context.Context, req *paymentpb.PayOr
 		ret = append(ret, &paymentpb.PayOrderInfo{
 			PayOrderId:  genPayOrderId(cLog),
 			Amount:      int32(cLog.Amount),
-			UserId:      *req.UserId,
+			UserId:      req.UserId,
 			CreatedTime: cLog.CreatedAt.Unix(),
 		})
 	}

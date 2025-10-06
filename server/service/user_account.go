@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/bizerror"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/paymentpb"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/repository"
@@ -94,7 +95,7 @@ func (u *UserAccountServiceImpl) PayOrder(ctx context.Context, userId int, bizId
 	account, err := u.userAccountDao.GetUserAccountByUserID(ctx, userId)
 	if err != nil {
 		log.Logger.Errorf("Failed to get user account for user ID %d: %v", userId, err)
-		return nil, err
+		return nil, bizerror.BizError{Message: "failed to get user account"}
 	}
 	if account == nil {
 		log.Logger.Warnf("User account not found for user ID %d", userId)
@@ -199,19 +200,15 @@ func (u *UserAccountServiceImpl) UserAccountTopUp(ctx context.Context, userId in
 }
 
 func (u *UserAccountServiceImpl) GetUserPayHistory(ctx context.Context, query *paymentpb.PayOrderQueryRequest) ([]*model.UserAccountChangeLog, error) {
-	if query.UserId == nil && query.PayOrderId == nil {
-		log.Logger.Warnf("Either UserId or PayOrderId must be provided")
-		return nil, fmt.Errorf("either UserId or PayOrderId must be provided")
-	}
 	var accountId *int
-	if query.UserId != nil {
-		account, err := u.userAccountDao.GetUserAccountByUserID(ctx, int(*query.UserId))
+	if query.UserId > 0 {
+		account, err := u.userAccountDao.GetUserAccountByUserID(ctx, int(query.UserId))
 		if err != nil {
-			log.Logger.Errorf("Failed to get user account for user ID %d: %v", *query.UserId, err)
+			log.Logger.Errorf("Failed to get user account for user ID %d: %v", query.UserId, err)
 			return nil, err
 		}
 		if account == nil {
-			log.Logger.Warnf("User account not found for user ID %d", *query.UserId)
+			log.Logger.Warnf("User account not found for user ID %d", query.UserId)
 			return nil, fmt.Errorf("user account not found")
 		}
 		accountId = &account.ID
@@ -219,7 +216,7 @@ func (u *UserAccountServiceImpl) GetUserPayHistory(ctx context.Context, query *p
 	changeLogs, err := u.userAccountChangeLogDao.QueryChangeLogs(ctx,
 		&model.UserAccountChangeLogQuery{
 			AccountId:     accountId,
-			IdempotentKey: query.PayOrderId,
+			IdempotentKey: query.BizId,
 			OpType:        model.OpTypePayment,
 		})
 	if err != nil {
