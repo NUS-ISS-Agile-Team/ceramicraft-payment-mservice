@@ -28,6 +28,8 @@ const (
 	RespCode_INSUFFICIENT_BALANCE RespCode = 1001
 	RespCode_ACCOUNT_NOT_EXIST    RespCode = 1002
 	RespCode_DUPLICATE_REQUEST    RespCode = 1003
+	RespCode_BAD_REQUEST          RespCode = 4000
+	RespCode_UNKNOWN_ERROR        RespCode = 5000
 )
 
 // Enum value maps for RespCode.
@@ -37,12 +39,16 @@ var (
 		1001: "INSUFFICIENT_BALANCE",
 		1002: "ACCOUNT_NOT_EXIST",
 		1003: "DUPLICATE_REQUEST",
+		4000: "BAD_REQUEST",
+		5000: "UNKNOWN_ERROR",
 	}
 	RespCode_value = map[string]int32{
 		"SUCCESS":              0,
 		"INSUFFICIENT_BALANCE": 1001,
 		"ACCOUNT_NOT_EXIST":    1002,
 		"DUPLICATE_REQUEST":    1003,
+		"BAD_REQUEST":          4000,
+		"UNKNOWN_ERROR":        5000,
 	}
 )
 
@@ -414,12 +420,14 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x1f\n" +
 	"\berrorMsg\x18\x02 \x01(\tH\x00R\berrorMsg\x88\x01\x01\x12=\n" +
 	"\rpayOrderInfos\x18\x03 \x03(\v2\x17.paymentpb.PayOrderInfoR\rpayOrderInfosB\v\n" +
-	"\t_errorMsg*b\n" +
+	"\t_errorMsg*\x88\x01\n" +
 	"\bRespCode\x12\v\n" +
 	"\aSUCCESS\x10\x00\x12\x19\n" +
 	"\x14INSUFFICIENT_BALANCE\x10\xe9\a\x12\x16\n" +
 	"\x11ACCOUNT_NOT_EXIST\x10\xea\a\x12\x16\n" +
-	"\x11DUPLICATE_REQUEST\x10\xeb\a2\xa9\x01\n" +
+	"\x11DUPLICATE_REQUEST\x10\xeb\a\x12\x10\n" +
+	"\vBAD_REQUEST\x10\xa0\x1f\x12\x12\n" +
+	"\rUNKNOWN_ERROR\x10\x88'2\xa9\x01\n" +
 	"\x0ePaymentService\x12C\n" +
 	"\bPayOrder\x12\x1a.paymentpb.PayOrderRequest\x1a\x1b.paymentpb.PayOrderResponse\x12R\n" +
 	"\rQueryPayOrder\x12\x1f.paymentpb.PayOrderQueryRequest\x1a .paymentpb.PayOrderQueryResponseB\x16Z\x14/paymentpb;paymentpbb\x06proto3"
