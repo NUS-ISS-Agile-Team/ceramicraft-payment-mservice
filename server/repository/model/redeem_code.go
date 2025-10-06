@@ -16,3 +16,7 @@ type RedeemCodeQuery struct {
 	Used  *bool
 	Limit int
 }
+
+func (r *RedeemCode) TableName() string {
+	return "redeem_codes"
+}

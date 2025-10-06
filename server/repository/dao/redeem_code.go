@@ -14,7 +14,7 @@ type RedeemCodeDao interface {
 	BatchInsert(ctx context.Context, redeemCodes []*model.RedeemCode) error
 	GetByCode(ctx context.Context, code string) (*model.RedeemCode, error)
 	QueryRedeemCodes(ctx context.Context, query *model.RedeemCodeQuery) ([]*model.RedeemCode, error)
-	UpdateRedeemCode(ctx context.Context, redeemCode *model.RedeemCode) error
+	UseRedeemCodeInTransaction(ctx context.Context, redeemCode *model.RedeemCode, tx *gorm.DB) (int, error)
 }
 
 type RedeemCodeDaoImpl struct {
@@ -79,12 +79,12 @@ func (dao *RedeemCodeDaoImpl) QueryRedeemCodes(ctx context.Context, query *model
 	return redeemCodes, nil
 }
 
-func (dao *RedeemCodeDaoImpl) UpdateRedeemCode(ctx context.Context, redeemCode *model.RedeemCode) error {
-	ret := dao.db.Save(redeemCode)
+func (dao *RedeemCodeDaoImpl) UseRedeemCodeInTransaction(ctx context.Context, redeemCode *model.RedeemCode, tx *gorm.DB) (int, error) {
+	ret := tx.WithContext(ctx).Model(redeemCode).Where("used_user_id=0").Save(redeemCode)
 	if ret.Error != nil {
 		log.Logger.Errorf("Failed to update redeem code %s: %v", redeemCode.Code, ret.Error)
-		return ret.Error
+		return 0, ret.Error
 	}
 	log.Logger.Infof("Successfully updated redeem code %s", redeemCode.Code)
-	return nil
+	return int(ret.RowsAffected), nil
 }

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/repository/dao"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/repository/model"
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/utils"
 )
 
 type RedeemCodeService interface {
@@ -35,6 +35,8 @@ type RedeemCodeServiceImpl struct {
 	redeemCodeDao dao.RedeemCodeDao
 }
 
+const redeemCodeSize = 16
+
 // GenerateRedeemCodes implements RedeemCodeService.
 func (r *RedeemCodeServiceImpl) GenerateRedeemCodes(ctx context.Context, amount int, quantity int) error {
 	toInsert := make([]*model.RedeemCode, quantity)
@@ -43,7 +45,7 @@ func (r *RedeemCodeServiceImpl) GenerateRedeemCodes(ctx context.Context, amount 
 	for i := 0; i < quantity; i++ {
 		var code string
 		for {
-			code = genRedeemCode()
+			code = utils.GenRedeemCode(redeemCodeSize)
 			if _, exists := codeSet[code]; !exists {
 				log.Logger.Infof("Generated redeem code: %s", code)
 				codeSet[code] = struct{}{}
@@ -91,14 +93,4 @@ func (r *RedeemCodeServiceImpl) QueryRedeemCodes(ctx context.Context, query *dat
 		}
 	}
 	return result, nil
-}
-
-const charset = "0123456789"
-
-func genRedeemCode() string {
-	code := make([]byte, 16)
-	for i := range code {
-		code[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(code)
 }

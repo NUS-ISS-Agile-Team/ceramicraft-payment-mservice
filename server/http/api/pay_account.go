@@ -1,8 +1,11 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/http/data"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,17 +26,20 @@ func GetUserPayAccountInfo(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "User ID not found in context"})
 		return
 	}
-
-	// Simulate fetching user pay account info from database
-	payAccount := &data.UserPayAccount{
-		UserId:    userId,
-		AccountNo: "ACC123456",
-		Balance:   1000,
-		CreatedAt: 1622547800,
-		UpdatedAt: 1625149800,
+	userAccount, err := service.GetUserAccountService().GetUserAccountByUserID(c.Request.Context(), userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
+		return
 	}
 
-	c.JSON(200, data.BaseResponse{Data: payAccount})
+	c.JSON(200, data.BaseResponse{
+		Data: &data.UserPayAccount{
+			UserId:    userAccount.UserId,
+			Balance:   userAccount.Balance,
+			AccountNo: userAccount.GetHiddenAccountNo(),
+			CreatedAt: userAccount.CreatedAt.Unix(),
+			UpdatedAt: userAccount.UpdatedAt.Unix(),
+		}})
 }
 
 // TopUpUserPayAccount godoc
@@ -51,24 +57,21 @@ func TopUpUserPayAccount(c *gin.Context) {
 	if userIdInterface, exists := c.Get("userID"); exists {
 		userId = userIdInterface.(int)
 	} else {
-		c.JSON(400, gin.H{"error": "User ID not found in context"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID not found in context"})
 		return
 	}
 	log.Logger.Infof("TopUpUserPayAccount called for user ID: %d", userId)
 	var req data.UserPayAccountTopUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, data.BaseResponse{ErrMsg: err.Error()})
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
 
-	// Simulate processing the top-up request
-	topUpAmount := 100 // This would be determined by the redeem code in a real implementation
-	currentBalance := 1100
-
-	result := &data.UserPayAccountTopUpResult{
-		TopUpAmount:    topUpAmount,
-		CurrentBalance: currentBalance,
+	account, redeemCode, err := service.GetUserAccountService().UserAccountTopUp(c.Request.Context(), userId, req.RedeemCode)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
+		return
 	}
 
-	c.JSON(200, data.BaseResponse{Data: result})
+	c.JSON(200, data.BaseResponse{Data: &data.UserPayAccountTopUpResult{TopUpAmount: redeemCode.Amount, CurrentBalance: account.Balance}})
 }
