@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/demopb"
+	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common/paymentpb"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/config"
 	"github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server/log"
 	"google.golang.org/grpc"
@@ -28,7 +28,7 @@ func Init(exitSig chan os.Signal) {
 		grpc.MaxSendMsgSize(1024 * 1024), // Set maximum send message size (1MB here)
 	}
 	grpcServer := grpc.NewServer(opts...)
-	demopb.RegisterDemoServiceServer(grpcServer, &DemoService{})
+	paymentpb.RegisterPaymentServiceServer(grpcServer, &PaymentService{})
 
 	log.Logger.Infof("Server is running on %s", ipPort)
 	if err := grpcServer.Serve(listener); err != nil {

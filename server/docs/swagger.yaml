@@ -7,38 +7,46 @@ definitions:
       err_msg:
         type: string
     type: object
-  data.ItemVO:
+  data.RedeemCodeGenResult:
     properties:
-      id:
+      gen_count:
         type: integer
-      name:
+    type: object
+  data.UserPayAccount:
+    properties:
+      account_no:
+        type: string
+      balance:
+        type: integer
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  data.UserPayAccountTopUpRequest:
+    properties:
+      redeem_code:
         type: string
     required:
-    - name
+    - redeem_code
+    type: object
+  data.UserPayAccountTopUpResult:
+    properties:
+      current_balance:
+        type: integer
+      top_up_amount:
+        type: integer
     type: object
 info:
   contact: {}
 paths:
-  /payment-ms/v1/{client}/items:
-    post:
+  /payment-ms/v1/customer/pay-accounts/self:
+    get:
       consumes:
       - application/json
-      description: Create an item record.
-      parameters:
-      - description: Item information
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/data.ItemVO'
-      - description: Client identifier
-        enum:
-        - customer
-        - merchant
-        in: path
-        name: client
-        required: true
-        type: string
+      description: Get user pay account info
       produces:
       - application/json
       responses:
@@ -49,50 +57,104 @@ paths:
             - $ref: '#/definitions/data.BaseResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/data.ItemVO'
+                  $ref: '#/definitions/data.UserPayAccount'
               type: object
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/data.BaseResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-        "500":
-          description: Internal Server Error
+            $ref: '#/definitions/data.BaseResponse'
+      summary: Get user pay account info
+      tags:
+      - PayAccount
+  /payment-ms/v1/customer/pay-accounts/self/top-ups:
+    post:
+      consumes:
+      - application/json
+      description: Top up user pay account using a redeem code
+      parameters:
+      - description: Top up request
+        in: body
+        name: topup
+        required: true
+        schema:
+          $ref: '#/definitions/data.UserPayAccountTopUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/data.BaseResponse'
             - properties:
                 data:
-                  type: string
+                  $ref: '#/definitions/data.UserPayAccountTopUpResult'
               type: object
-      summary: Item Create
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/data.BaseResponse'
+      summary: Top up user pay account
       tags:
-      - Item
-  /payment-ms/v1/{client}/items/{item_id}:
+      - PayAccount
+  /payment-ms/v1/merchant/redeem-codes:
     get:
-      description: Get item information by item ID.
+      consumes:
+      - application/json
+      description: Query redeem codes
       parameters:
-      - description: Client identifier
-        enum:
-        - customer
-        - merchant
-        in: path
-        name: client
-        required: true
+      - in: query
+        name: code
         type: string
-      - description: Item.ID
-        in: path
-        name: item_id
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: used
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/data.BaseResponse'
+      summary: Query redeem codes
+      tags:
+      - RedeemCodes
+  /payment-ms/v1/merchant/redeem-codes/generate:
+    post:
+      consumes:
+      - application/json
+      description: Generate redeem codes
+      parameters:
+      - description: Amount for each redeem code
+        in: query
+        name: amount
         required: true
         type: integer
+      - description: Number of redeem codes to generate
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-      summary: Item Query with ID
+          schema:
+            allOf:
+            - $ref: '#/definitions/data.BaseResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/data.RedeemCodeGenResult'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/data.BaseResponse'
+      summary: Generate redeem codes
       tags:
-      - Item
+      - RedeemCodes
 swagger: "2.0"

@@ -4,9 +4,9 @@
         "contact": {}
     },
     "paths": {
-        "/payment-ms/v1/{client}/items": {
-            "post": {
-                "description": "Create an item record.",
+        "/payment-ms/v1/customer/pay-accounts/self": {
+            "get": {
+                "description": "Get user pay account info",
                 "consumes": [
                     "application/json"
                 ],
@@ -14,28 +14,155 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Item"
+                    "PayAccount"
                 ],
-                "summary": "Item Create",
+                "summary": "Get user pay account info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/data.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/data.UserPayAccount"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/data.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment-ms/v1/customer/pay-accounts/self/top-ups": {
+            "post": {
+                "description": "Top up user pay account using a redeem code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayAccount"
+                ],
+                "summary": "Top up user pay account",
                 "parameters": [
                     {
-                        "description": "Item information",
-                        "name": "user",
+                        "description": "Top up request",
+                        "name": "topup",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/data.ItemVO"
+                            "$ref": "#/definitions/data.UserPayAccountTopUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/data.BaseResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/data.UserPayAccountTopUpResult"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/data.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment-ms/v1/merchant/redeem-codes": {
+            "get": {
+                "description": "Query redeem codes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RedeemCodes"
+                ],
+                "summary": "Query redeem codes",
+                "parameters": [
                     {
-                        "enum": [
-                            "customer",
-                            "merchant"
-                        ],
                         "type": "string",
-                        "description": "Client identifier",
-                        "name": "client",
-                        "in": "path",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "used",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/data.BaseResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment-ms/v1/merchant/redeem-codes/generate": {
+            "post": {
+                "description": "Generate redeem codes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RedeemCodes"
+                ],
+                "summary": "Generate redeem codes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Amount for each redeem code",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of redeem codes to generate",
+                        "name": "count",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -51,7 +178,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/data.ItemVO"
+                                            "$ref": "#/definitions/data.RedeemCodeGenResult"
                                         }
                                     }
                                 }
@@ -61,72 +188,8 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/data.BaseResponse"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/payment-ms/v1/{client}/items/{item_id}": {
-            "get": {
-                "description": "Get item information by item ID.",
-                "tags": [
-                    "Item"
-                ],
-                "summary": "Item Query with ID",
-                "parameters": [
-                    {
-                        "enum": [
-                            "customer",
-                            "merchant"
-                        ],
-                        "type": "string",
-                        "description": "Client identifier",
-                        "name": "client",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Item.ID",
-                        "name": "item_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }
@@ -145,17 +208,53 @@
                 }
             }
         },
-        "data.ItemVO": {
+        "data.RedeemCodeGenResult": {
             "type": "object",
-            "required": [
-                "name"
-            ],
             "properties": {
-                "id": {
+                "gen_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "data.UserPayAccount": {
+            "type": "object",
+            "properties": {
+                "account_no": {
+                    "type": "string"
+                },
+                "balance": {
                     "type": "integer"
                 },
-                "name": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "data.UserPayAccountTopUpRequest": {
+            "type": "object",
+            "required": [
+                "redeem_code"
+            ],
+            "properties": {
+                "redeem_code": {
                     "type": "string"
+                }
+            }
+        },
+        "data.UserPayAccountTopUpResult": {
+            "type": "object",
+            "properties": {
+                "current_balance": {
+                    "type": "integer"
+                },
+                "top_up_amount": {
+                    "type": "integer"
                 }
             }
         }

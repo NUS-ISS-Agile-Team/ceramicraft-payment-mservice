@@ -15,6 +15,10 @@ var (
 	err error
 )
 
+const (
+	DefaultQueryLimit = 100
+)
+
 type TxBeginner interface {
 	Transaction(fc func(tx *gorm.DB) error, opts ...*sql.TxOptions) error
 }

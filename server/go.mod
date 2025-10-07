@@ -3,9 +3,10 @@ module github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server
 go 1.24.0
 
 require (
-	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20250929130340-5cb737378888
-	github.com/NUS-ISS-Agile-Team/ceramicraft-user-mservice/common v0.0.0-20250928025834-45b508404058
+	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v1.0.4
+	github.com/NUS-ISS-Agile-Team/ceramicraft-user-mservice/common v0.0.0-20251005082610-86cad2eddbc9
 	github.com/gin-gonic/gin v1.11.0
+	github.com/segmentio/kafka-go v0.4.49
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/files v1.0.1
@@ -14,6 +15,7 @@ require (
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.75.1
 	gorm.io/driver/mysql v1.6.0
+	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.0
 )
 
@@ -45,13 +47,16 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.54.0 // indirect

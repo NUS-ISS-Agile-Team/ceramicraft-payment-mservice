@@ -1,5 +1,7 @@
-github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20250929130340-5cb737378888 h1:G1z+/wpV3rRZhE0o8R36YI+m0b6HaDN1nd/VQblNx7c=
-github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20250929130340-5cb737378888/go.mod h1:pNMAqf0fw1LlXPeXdG2ZJn9kxihIjAYwXQ+pl+dJu/M=
+github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20251005130221-f8a4ee56cb0c h1:+1jGJGzDBmqIhLNcx5dN1r2xYgpU9k5vvGN77Kv+EzA=
+github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v0.0.0-20251005130221-f8a4ee56cb0c/go.mod h1:pNMAqf0fw1LlXPeXdG2ZJn9kxihIjAYwXQ+pl+dJu/M=
+github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v1.0.4 h1:nOXZHU5vPL2rb/V3Ue52XN6ut14e+pF9vRDD+3veosU=
+github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v1.0.4/go.mod h1:pNMAqf0fw1LlXPeXdG2ZJn9kxihIjAYwXQ+pl+dJu/M=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
 github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
