@@ -47,7 +47,7 @@ func (dao *RedeemCodeDaoImpl) BatchInsert(ctx context.Context, redeemCodes []*mo
 
 func (dao *RedeemCodeDaoImpl) GetByCode(ctx context.Context, code string) (*model.RedeemCode, error) {
 	var redeemCode model.RedeemCode
-	ret := dao.db.Where("code = ?", code).First(&redeemCode)
+	ret := dao.db.WithContext(ctx).Where("code = ?", code).First(&redeemCode)
 	if ret.Error != nil {
 		log.Logger.Errorf("Failed to get redeem code by code %s: %v", code, ret.Error)
 		return nil, ret.Error

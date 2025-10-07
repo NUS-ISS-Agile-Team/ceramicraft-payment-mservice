@@ -164,7 +164,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Amount for each redeemm code",
+                        "description": "Amount for each redeem code",
                         "name": "amount",
                         "in": "query",
                         "required": true
@@ -204,133 +204,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/payment-ms/v1/{client}/items": {
-            "post": {
-                "description": "Create an item record.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Item"
-                ],
-                "summary": "Item Create",
-                "parameters": [
-                    {
-                        "description": "Item information",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/data.ItemVO"
-                        }
-                    },
-                    {
-                        "enum": [
-                            "customer",
-                            "merchant"
-                        ],
-                        "type": "string",
-                        "description": "Client identifier",
-                        "name": "client",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/data.ItemVO"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/data.BaseResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/payment-ms/v1/{client}/items/{item_id}": {
-            "get": {
-                "description": "Get item information by item ID.",
-                "tags": [
-                    "Item"
-                ],
-                "summary": "Item Query with ID",
-                "parameters": [
-                    {
-                        "enum": [
-                            "customer",
-                            "merchant"
-                        ],
-                        "type": "string",
-                        "description": "Client identifier",
-                        "name": "client",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Item.ID",
-                        "name": "item_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -342,20 +215,6 @@ const docTemplate = `{
                 },
                 "data": {},
                 "err_msg": {
-                    "type": "string"
-                }
-            }
-        },
-        "data.ItemVO": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
                     "type": "string"
                 }
             }

@@ -7,15 +7,6 @@ definitions:
       err_msg:
         type: string
     type: object
-  data.ItemVO:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    required:
-    - name
-    type: object
   data.RedeemCodeGenResult:
     properties:
       gen_count:
@@ -51,82 +42,6 @@ definitions:
 info:
   contact: {}
 paths:
-  /payment-ms/v1/{client}/items:
-    post:
-      consumes:
-      - application/json
-      description: Create an item record.
-      parameters:
-      - description: Item information
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/data.ItemVO'
-      - description: Client identifier
-        enum:
-        - customer
-        - merchant
-        in: path
-        name: client
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/data.BaseResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/data.ItemVO'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/data.BaseResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            allOf:
-            - $ref: '#/definitions/data.BaseResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: Item Create
-      tags:
-      - Item
-  /payment-ms/v1/{client}/items/{item_id}:
-    get:
-      description: Get item information by item ID.
-      parameters:
-      - description: Client identifier
-        enum:
-        - customer
-        - merchant
-        in: path
-        name: client
-        required: true
-        type: string
-      - description: Item.ID
-        in: path
-        name: item_id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-      summary: Item Query with ID
-      tags:
-      - Item
   /payment-ms/v1/customer/pay-accounts/self:
     get:
       consumes:
@@ -213,7 +128,7 @@ paths:
       - application/json
       description: Generate redeem codes
       parameters:
-      - description: Amount for each redeemm code
+      - description: Amount for each redeem code
         in: query
         name: amount
         required: true

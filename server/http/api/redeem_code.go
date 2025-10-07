@@ -20,7 +20,7 @@ const (
 // @Tags RedeemCodes
 // @Accept json
 // @Produce json
-// @Param amount query int true "Amount for each redeemm code"
+// @Param amount query int true "Amount for each redeem code"
 // @Param count query int true "Number of redeem codes to generate"
 // @Success 200 {object} data.BaseResponse{data=data.RedeemCodeGenResult}
 // @Failure 400 {object} data.BaseResponse
@@ -28,7 +28,7 @@ const (
 func GenerateRedeemCodes(c *gin.Context) {
 	var req data.RedeemCodeGenRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		log.Logger.Errorf("GenerateRedeemCodes bind error:", err)
+		log.Logger.Errorf("GenerateRedeemCodes bind error: %v", err)
 		c.JSON(http.StatusBadRequest, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
@@ -39,7 +39,7 @@ func GenerateRedeemCodes(c *gin.Context) {
 	}
 	err := service.GetRedeemCodeService().GenerateRedeemCodes(c.Request.Context(), req.Amount, req.Count)
 	if err != nil {
-		log.Logger.Errorf("GenerateRedeemCodes service error:", err)
+		log.Logger.Errorf("GenerateRedeemCodes service error: %v", err)
 		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
@@ -70,7 +70,7 @@ func QueryRedeemCodes(c *gin.Context) {
 	}
 	ret, err := service.GetRedeemCodeService().QueryRedeemCodes(c.Request.Context(), &query)
 	if err != nil {
-		log.Logger.Errorf("QueryRedeemCodes service error:", err)
+		log.Logger.Errorf("QueryRedeemCodes service error: $v", err)
 		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}

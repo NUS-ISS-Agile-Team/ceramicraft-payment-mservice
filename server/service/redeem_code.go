@@ -65,7 +65,7 @@ func (r *RedeemCodeServiceImpl) GenerateRedeemCodes(ctx context.Context, amount 
 		log.Logger.Errorf("Failed to generate redeem codes: %v", err)
 		return err
 	}
-	log.Logger.Infof("Successfully generated %d redeem codes with amount %d eacth", quantity, amount)
+	log.Logger.Infof("Successfully generated %d redeem codes with amount %d each", quantity, amount)
 	return nil
 }
 

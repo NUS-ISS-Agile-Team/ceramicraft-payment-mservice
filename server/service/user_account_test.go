@@ -32,7 +32,7 @@ func TestGetUserAccountService(t *testing.T) {
 		}
 	})
 }
-func TestCreteateUserAccount(t *testing.T) {
+func TestCreateUserAccount(t *testing.T) {
 	ctx := context.Background()
 	userId := 1
 	initEnv()

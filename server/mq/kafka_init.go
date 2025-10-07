@@ -32,7 +32,7 @@ func startKafkaConsumer(topic string, processor KafkaMsgProcessor) {
 				log.Logger.Errorf("Error reading message: %v", err)
 				continue
 			}
-			log.Logger.Infof("Message received: Topic=%s, Key=%s, Valud=%s", m.Topic, m.Key, string(m.Value))
+			log.Logger.Infof("Message received: Topic=%s, Key=%s, Value=%s", m.Topic, m.Key, string(m.Value))
 			err = processor(m.Value)
 			if err == nil {
 				cmitErr := reader.CommitMessages(ctx, m)

@@ -67,7 +67,7 @@ func (u *UserAccountDaoImpl) GetUserAccountByUserID(ctx context.Context, userID 
 
 // AddBalance implements UserAccountDao.
 func (u *UserAccountDaoImpl) AddBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) error {
-	ret := u.db.WithContext(ctx).Model(&model.UserAccount{}).
+	ret := tx.WithContext(ctx).Model(&model.UserAccount{}).
 		Where("user_id = ? and balance=?", userID, oldAmount).
 		Update("balance", gorm.Expr("balance + ?", amount))
 	if ret.Error != nil {
@@ -84,7 +84,7 @@ func (u *UserAccountDaoImpl) AddBalanceInTransaction(ctx context.Context, userID
 
 // SubtractBalance implements UserAccountDao.
 func (u *UserAccountDaoImpl) SubtractBalanceInTransaction(ctx context.Context, userID int, amount int, oldAmount int, tx *gorm.DB) (int, error) {
-	ret := u.db.WithContext(ctx).Model(&model.UserAccount{}).
+	ret := tx.WithContext(ctx).Model(&model.UserAccount{}).
 		Where("user_id = ? and balance=?", userID, oldAmount).
 		Update("balance", gorm.Expr("balance - ?", amount))
 	if ret.Error != nil {
