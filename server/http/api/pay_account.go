@@ -17,13 +17,15 @@ import (
 // @Produce json
 // @Success 200 {object} data.BaseResponse{data=data.UserPayAccount}
 // @Failure 400 {object} data.BaseResponse
+// @Failure 404 {object} data.BaseResponse
+// @Failure 500 {object} data.BaseResponse
 // @Router /payment-ms/v1/customer/pay-accounts/self [get]
 func GetUserPayAccountInfo(c *gin.Context) {
 	var userId int
 	if userIdInterface, exists := c.Get("userID"); exists {
 		userId = userIdInterface.(int)
 	} else {
-		c.JSON(400, gin.H{"error": "User ID not found in context"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID not found in context"})
 		return
 	}
 	userAccount, err := service.GetUserAccountService().GetUserAccountByUserID(c.Request.Context(), userId)
@@ -31,8 +33,12 @@ func GetUserPayAccountInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, data.BaseResponse{ErrMsg: err.Error()})
 		return
 	}
+	if userAccount == nil {
+		c.JSON(http.StatusNotFound, data.BaseResponse{ErrMsg: "User pay account not found"})
+		return
+	}
 
-	c.JSON(200, data.BaseResponse{
+	c.JSON(http.StatusOK, data.BaseResponse{
 		Data: &data.UserPayAccount{
 			UserId:    userAccount.UserId,
 			Balance:   userAccount.Balance,
@@ -73,5 +79,5 @@ func TopUpUserPayAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, data.BaseResponse{Data: &data.UserPayAccountTopUpResult{TopUpAmount: redeemCode.Amount, CurrentBalance: account.Balance}})
+	c.JSON(http.StatusOK, data.BaseResponse{Data: &data.UserPayAccountTopUpResult{TopUpAmount: redeemCode.Amount, CurrentBalance: account.Balance}})
 }
