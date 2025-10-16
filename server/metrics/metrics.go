@@ -25,7 +25,7 @@ var (
 	// 错误总数
 	HttpRequestsErrors = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "http_errors_total.",
+			Name: "http_errors_total",
 			Help: "Total number of error responses (status >= 400).",
 		},
 		[]string{"method", "path", "status"},
