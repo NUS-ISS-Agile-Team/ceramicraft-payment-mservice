@@ -1,6 +1,6 @@
 module github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/server
 
-go 1.24.0
+go 1.24.9
 
 require (
 	github.com/NUS-ISS-Agile-Team/ceramicraft-payment-mservice/common v1.0.4
